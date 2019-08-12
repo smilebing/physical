@@ -12,8 +12,15 @@
 
 <!--<button class="glyphicon glyphicon-chevron-left"/>-->
 <!--<button class="glyphicon glyphicon-chevron-right"/>-->
-<button>aa</button>
-
+<div>
+    <h1 align="center">摩擦力实验</h1>
+</div>
+<div id="sim" align="center"></div>
+<div align="center">
+    <button class="btn btn-primary">改变摩擦力</button>
+    <button class="btn btn-success">改变质量</button>
+    <button class="btn btn-info">改变接触面积</button>
+</div>
 </body>
 
 <script>
@@ -21,56 +28,126 @@
     var Engine = Matter.Engine,
         Render = Matter.Render,
         World = Matter.World,
-        Bodies = Matter.Bodies;
+        Bodies = Matter.Bodies,
+        Mouse = Matter.Mouse,
+        MouseConstraint = Matter.MouseConstraint,
+        World = Matter.World,
+        Composites = Matter.Composites,
+        Render = Matter.Render,
+        Runner = Matter.Runner,
+        Vector = Matter.Vector;
+
 
     // create an engine
     var engine = Engine.create();
 
     // create a renderer
     var render = Render.create({
-        element: document.body,
+        element: document.getElementById("sim"),
         engine: engine,
         options: {
-            background: '#ffffff' // 全局渲染模式时背景色
+            width: 800,
+            height: 600,
+            showVelocity: true
         }
     });
 
+
+    Render.run(render);
+
+    // create runner
+    var runner = Runner.create();
+    Runner.run(runner, engine);
+
+    World.add(engine.world, [
+        Bodies.rectangle(400, 0, 800, 5, {isStatic: true}),
+        Bodies.rectangle(400, 600, 800, 5, {isStatic: true}),
+        Bodies.rectangle(800, 300, 5, 600, {isStatic: true}),
+        Bodies.rectangle(0, 300, 5, 600, {isStatic: true})]
+    );
+
+    // add mouse control
+    var mouse = Mouse.create(render.canvas),
+        mouseConstraint = MouseConstraint.create(engine, {
+            mouse: mouse,
+            constraint: {
+                stiffness: 0.2,
+                render: {
+                    visible: true
+                }
+            }
+        });
+
+    World.add(engine.world, mouseConstraint);
+
+    var du = Math.PI * 0.4;
     var stickA = Bodies.rectangle(400, 400, 20, 600, {
         isStatic: true,
-        angle: -Math.PI * 0.4
+        angle: -du
     });
     var stickB = Bodies.rectangle(400, 150, 20, 600, {
         isStatic: true,
-        angle: -Math.PI * 0.4
+        angle: -du
     });
+    World.add(engine.world, [stickA, stickB]);
 
-    //添加鼠标控制
-    // var mouseConstraint = MouseConstraint.create(engine, {});
-    var mouse = Matter.MouseConstraint.create(engine, {});
+    var g = 10;
 
-    // create two boxes and a ground
-    var ground = Bodies.rectangle(400, 610, 810, 60, {isStatic: true});
-    // 创建刚体
-    // var rect = Bodies.rectangle(200, 100, 50, 50), // 矩形
-    // circle = Bodies.circle(300, 100, 25), // 圆
-    // polygon = Bodies.polygon(450, 100, 5, 25), // 多边形
-    // trapezoid = Bodies.trapezoid(590, 100, 50, 50, 3); // 梯形
+    //两个物体的质量，g
+    var mA = 100;
+    var mB = 1;
 
-    var rect1 = Bodies.rectangle(200, 320, 50, 50,{
-        friction:0.01
+    var densityA = 0.1;
+    var densityB = 1;
+
+    var frictionA = 1;
+    var frictionB = 1;
+
+    var vSin = Math.round(Math.sin((du)) * 1000000) / 1000000;
+
+    //余弦值
+    var vCos = Math.round(Math.cos((du)) * 1000000) / 1000000;
+
+    //计算摩擦力
+    //滑动力
+    // Fhua=mg*sin(du)
+    //摩擦力
+    // Fmo=mg*cos(du)
+    // 真正运动的力
+    //Fdong=Fhua-Fmo=mg*sin(du)-mg*0.5*cos(du))
+
+    var fA = mA * g * vSin - mA * g * 0.5 * vCos;
+    var fB = mB * g * vSin - mB * g * 0.5 * vCos;
+
+    console.log(fA);
+    console.log(fB);
+
+    if (fA > 0) {
+        //能滑动
+        //计算摩擦系数
+        frictionA = 1 / fA * 100;
+    }
+
+    if (fB > 0) {
+        //能滑动
+        //计算摩擦系数
+        frictionB = 1 / fB * 100;
+    }
+
+    console.log(frictionA);
+    console.log(frictionB);
+
+    var rectA = Bodies.rectangle(200, 320, 50, 50, {
+        friction: frictionA,
+        density: densityA
     });
-    var rect2 = Bodies.rectangle(200, 30, 50, 50,{
-        friction:0.1
+    var rectB = Bodies.rectangle(200, 30, 50, 50, {
+        friction: frictionB,
+        density: densityB
     });
 
     // 将刚体添加到世界中
-    World.add(engine.world, [mouse, stickA, stickB, ground, rect1, rect2]);
-    // engine.timing.timeScale = 1.1;
+    World.add(engine.world, [rectA, rectB]);
 
-    // run the engine
-    Engine.run(engine);
-
-    // run the renderer
-    Render.run(render);
 </script>
 </html>
