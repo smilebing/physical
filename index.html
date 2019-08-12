@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>斜坡实验</title>
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/3.4.1/css/bootstrap.css" rel="stylesheet">
+    <script src="js/matter.js" type="text/javascript"></script>
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.js"></script>
+    <script src="https://cdn.bootcss.com/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<!--<button class="glyphicon glyphicon-chevron-left"/>-->
+<!--<button class="glyphicon glyphicon-chevron-right"/>-->
+<button>aa</button>
+
+</body>
+
+<script>
+    // module aliases
+    var Engine = Matter.Engine,
+        Render = Matter.Render,
+        World = Matter.World,
+        Bodies = Matter.Bodies;
+
+    // create an engine
+    var engine = Engine.create();
+
+    // create a renderer
+    var render = Render.create({
+        element: document.body,
+        engine: engine,
+        options: {
+            background: '#ffffff' // 全局渲染模式时背景色
+        }
+    });
+
+    var stickA = Bodies.rectangle(400, 400, 20, 600, {
+        isStatic: true,
+        angle: -Math.PI * 0.4
+    });
+    var stickB = Bodies.rectangle(400, 150, 20, 600, {
+        isStatic: true,
+        angle: -Math.PI * 0.4
+    });
+
+    //添加鼠标控制
+    // var mouseConstraint = MouseConstraint.create(engine, {});
+    var mouse = Matter.MouseConstraint.create(engine, {});
+
+    // create two boxes and a ground
+    var ground = Bodies.rectangle(400, 610, 810, 60, {isStatic: true});
+    // 创建刚体
+    // var rect = Bodies.rectangle(200, 100, 50, 50), // 矩形
+    // circle = Bodies.circle(300, 100, 25), // 圆
+    // polygon = Bodies.polygon(450, 100, 5, 25), // 多边形
+    // trapezoid = Bodies.trapezoid(590, 100, 50, 50, 3); // 梯形
+
+    var rect1 = Bodies.rectangle(200, 320, 50, 50,{
+        friction:0.01
+    });
+    var rect2 = Bodies.rectangle(200, 30, 50, 50,{
+        friction:0.1
+    });
+
+    // 将刚体添加到世界中
+    World.add(engine.world, [mouse, stickA, stickB, ground, rect1, rect2]);
+    // engine.timing.timeScale = 1.1;
+
+    // run the engine
+    Engine.run(engine);
+
+    // run the renderer
+    Render.run(render);
+</script>
+</html>
