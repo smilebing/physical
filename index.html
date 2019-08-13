@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>斜坡实验</title>
-    <link href="https://cdn.bootcss.com/twitter-bootstrap/3.4.1/css/bootstrap.css" rel="stylesheet">
     <script src="js/matter.js" type="text/javascript"></script>
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/3.4.1/css/bootstrap.css" rel="stylesheet">
     <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.js"></script>
     <script src="https://cdn.bootcss.com/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
@@ -48,7 +48,9 @@
         options: {
             width: 800,
             height: 600,
-            showVelocity: true
+            showVelocity: true,
+            wireframes: false,
+            background: '#000000'
         }
     });
 
@@ -83,14 +85,39 @@
     var du = Math.PI * 0.4;
     var stickA = Bodies.rectangle(400, 400, 20, 600, {
         isStatic: true,
-        angle: -du
+        angle: -du,
+        render: {
+            fillStyle: '#0d68c4'
+        }
     });
     var stickB = Bodies.rectangle(400, 150, 20, 600, {
         isStatic: true,
-        angle: -du
+        angle: -du,
+        render: {
+            fillStyle: '#0d68c4'
+        }
     });
     World.add(engine.world, [stickA, stickB]);
 
+    // define our categories (as bit fields, there are up to 32 available)
+    var defaultCategory = 0x0001,
+        redCategory = 0x0002,
+        greenCategory = 0x0004,
+        blueCategory = 0x0008;
+
+    var redColor = '#C44D58',
+        blueColor = '#4ECDC4',
+        greenColor = '#C7F464';
+    World.add(engine.world,
+        Bodies.circle(480, 40, 30, {
+            collisionFilter: {
+                mask: defaultCategory | blueCategory
+            },
+            render: {
+                fillStyle: blueColor
+            }
+        })
+    );
     var g = 10;
 
     //两个物体的质量，g
@@ -139,7 +166,15 @@
 
     var rectA = Bodies.rectangle(200, 320, 50, 50, {
         friction: frictionA,
-        density: densityA
+        density: densityA,
+        render: {
+            sprite: {
+                texture: './img/box.png'
+            }
+        },
+        background: {
+            color: 0xFFFFFF
+        }
     });
     var rectB = Bodies.rectangle(200, 30, 50, 50, {
         friction: frictionB,
