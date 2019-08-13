@@ -104,8 +104,8 @@ Example.demo = function () {
     var g = 10;
 
     //两个物体的质量，g
-    var mA = 100;
-    var mB = 10;
+    var mA = 10;
+    var mB = 1;
 
     var densityA = 0.1;
     var densityB = 1;
@@ -148,25 +148,31 @@ Example.demo = function () {
     console.log(frictionA);
     console.log(frictionB);
 
-    var rectA = Bodies.rectangle(200, 320, 50, 50, {
+    var rectA = Bodies.rectangle(200, 320, 60, 60, {
         friction: frictionA,
         frictionStatic: fAjing,
         mass: mA,
-        // render: {
-        //     hasBounds: true,
-        //     sprite: {
-        //         texture: './img/box.png',
-        //     }
-        // },
+        render: {
+            hasBounds: true,
+            sprite: {
+                texture: './img/10KG.png',
+            }
+        },
         background: {
             color: 0xFFFFFF
         }
     });
 
-    var rectB = Bodies.rectangle(200, 30, 50, 50, {
+    var rectB = Bodies.rectangle(200, 30, 60, 60, {
         friction: frictionB,
         frictionStatic: fBjing,
-        mass: mB
+        mass: mB,
+        render: {
+            hasBounds: true,
+            sprite: {
+                texture: './img/1KG.png',
+            }
+        },
     });
 
     console.log(rectA);
