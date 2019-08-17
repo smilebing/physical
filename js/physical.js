@@ -1,6 +1,7 @@
 var Example = Example || {};
 
-Example.demo = function () {
+Example.demo = function (windowWidth) {
+    var centerX = windowWidth / 2;
     // module aliases
     var Engine = Matter.Engine,
         Render = Matter.Render,
@@ -27,7 +28,7 @@ Example.demo = function () {
         engine: engine,
         element: document.getElementById("sim"),
         options: {
-            width: 800,
+            width: windowWidth,
             height: 600,
             showVelocity: true,
             wireframes: false,
@@ -44,9 +45,9 @@ Example.demo = function () {
     Runner.run(runner, engine);
 
     World.add(engine.world, [
-        Bodies.rectangle(400, 0, 800, 5, {isStatic: true}),
-        Bodies.rectangle(400, 600, 800, 5, {isStatic: true}),
-        Bodies.rectangle(800, 300, 5, 600, {isStatic: true}),
+        Bodies.rectangle(centerX, 0, windowWidth, 5, {isStatic: true}),
+        Bodies.rectangle(centerX, 600, windowWidth, 5, {isStatic: true}),
+        Bodies.rectangle(windowWidth, 300, 5, 600, {isStatic: true}),
         Bodies.rectangle(0, 300, 5, 600, {isStatic: true})]
     );
 
@@ -68,7 +69,7 @@ Example.demo = function () {
     var du = Math.PI * 0.4;
     var maxDu = Math.PI * 0.7;
     var minDu = Math.PI * 0.3;
-    var stickA = Bodies.rectangle(400, 400, 20, 600, {
+    var stickA = Bodies.rectangle(centerX, 400, 20, 600, {
         isStatic: true,
         angle: du,
         label: "stickA",
@@ -77,7 +78,7 @@ Example.demo = function () {
         },
         chamfer: 10
     });
-    var stickB = Bodies.rectangle(400, 150, 20, 600, {
+    var stickB = Bodies.rectangle(centerX, 150, 20, 600, {
         isStatic: true,
         angle: du,
         label: "stickB",
@@ -116,7 +117,6 @@ Example.demo = function () {
             newDu = Math.PI * newDu;
 
 
-
             console.log(disY);
             console.log(newDu);
             if (newDu > maxDu) {
@@ -140,7 +140,7 @@ Example.demo = function () {
     var redColor = '#C44D58',
         blueColor = '#4ECDC4',
         greenColor = '#C7F464';
-    var circle = Bodies.circle(480, 40, 30, {
+    var circle = Bodies.circle(centerX, 40, 30, {
         collisionFilter: {
             mask: defaultCategory | blueCategory
         },
@@ -156,7 +156,7 @@ Example.demo = function () {
 
     var landFrictionStatic = 0.1;
     var landFriction = 0.01;
-    var rectA = Bodies.rectangle(600, 320, 60, 60, {
+    var rectA = Bodies.rectangle(centerX, 320, 60, 60, {
         // friction: landFriction,
         // frictionStatic: landFrictionStatic,
         density: 0.02,
@@ -171,7 +171,7 @@ Example.demo = function () {
         }
     });
 
-    var rectB = Bodies.rectangle(600, 30, 60, 60, {
+    var rectB = Bodies.rectangle(centerX, 30, 60, 60, {
         // friction: landFriction,
         // frictionStatic: landFrictionStatic,
         // mass: mB,
@@ -209,11 +209,11 @@ function getTanDeg(tan) {
 }
 
 $(function () {
-    var demo = Example.demo();
+    var demo = Example.demo($(window).width());
 });
 
 function reset() {
     Example.demo().stop();
     $("#sim").empty();
-    Example.demo();
+    Example.demo($(window).width());
 }
