@@ -12,11 +12,15 @@ Example.demo = function () {
         Composites = Matter.Composites,
         Render = Matter.Render,
         Runner = Matter.Runner,
+        Constraint = Matter.Constraint,
+        World = Matter.World,
+        Events = Matter.Events,
         Vector = Matter.Vector;
 
 
     // create an engine
-    var engine = Engine.create();
+    var engine = Engine.create(),
+        world = engine.world;
 
     // create a renderer
     var render = Render.create({
@@ -60,10 +64,14 @@ Example.demo = function () {
 
     World.add(engine.world, mouseConstraint);
 
+
     var du = Math.PI * 0.4;
+    var maxDu = Math.PI * 0.7;
+    var minDu = Math.PI * 0.3;
     var stickA = Bodies.rectangle(400, 400, 20, 600, {
         isStatic: true,
-        angle: -du,
+        angle: du,
+        label: "stickA",
         render: {
             fillStyle: '#2E8B57'
         },
@@ -71,13 +79,57 @@ Example.demo = function () {
     });
     var stickB = Bodies.rectangle(400, 150, 20, 600, {
         isStatic: true,
-        angle: -du,
+        angle: du,
+        label: "stickB",
         render: {
             fillStyle: '#2E8B57'
         },
         chamfer: 10
     });
     World.add(engine.world, [stickA, stickB]);
+
+
+    Events.on(mouseConstraint, 'startdrag', function (event) {
+        console.log('startdrag', event);
+    });
+
+    // an example of using mouse events on a mouse
+    Events.on(mouseConstraint, 'enddrag', function (event) {
+        console.log('enddrag', event);
+        if (event.body.label == "stickA") {
+            console.log(stickA);
+            var startP = event.mouse.mousedownPosition;
+            var endP = event.mouse.mouseupPosition;
+
+            // var tan = -(endP.y - stickA.position.y) / (200);
+            var disY = endP.y - stickA.position.y;
+            var newDu = 0;
+            if (disY > 0) {
+                newDu = getTanDeg(disY / 200);
+                newDu += 0.5;
+            } else {
+                newDu = getTanDeg(-disY / 200);
+                newDu = 0.5 - newDu;
+            }
+
+            console.log(newDu);
+            newDu = Math.PI * newDu;
+
+
+
+            console.log(disY);
+            console.log(newDu);
+            if (newDu > maxDu) {
+                newDu = maxDu;
+            }
+            if (newDu < minDu) {
+                newDu = minDu;
+            }
+
+            Matter.Body.setAngle(stickA, newDu);
+        }
+    });
+
 
     // define our categories (as bit fields, there are up to 32 available)
     var defaultCategory = 0x0001,
@@ -96,62 +148,18 @@ Example.demo = function () {
             fillStyle: blueColor
         },
         friction: 0.001,
-        mass: 100
+        mass: 100,
+        restitution: 0.8
     });
     World.add(engine.world, circle);
     console.log(circle);
 
-    var g = 10;
-
-    //两个物体的质量，g
-    var mA = 10;
-    var mB = 1;
-
-    var densityA = 0.1;
-    var densityB = 1;
-
-    var frictionA = 1;
-    var frictionB = 1;
-
-    var vSin = Math.round(Math.sin((du)) * 1000000) / 1000000;
-
-    //余弦值
-    var vCos = Math.round(Math.cos((du)) * 1000000) / 1000000;
-
-    //计算摩擦力
-    //滑动力
-    // Fhua=mg*sin(du)
-    //摩擦力
-    // Fmo=mg*cos(du)
-    // 真正运动的力
-    //Fdong=Fhua-Fmo=mg*sin(du)-mg*0.5*cos(du))
-
-    var fA = mA * g * vSin - mA * g * 0.5 * vCos;
-    var fB = mB * g * vSin - mB * g * 0.5 * vCos;
-    var fAjing = mA * vSin;
-    var fBjing = mB * vSin;
-    console.log(fA);
-    console.log(fB);
-
-    if (fA > 0) {
-        //能滑动
-        //计算摩擦系数
-        frictionA = 1 / fA * 1;
-    }
-
-    if (fB > 0) {
-        //能滑动
-        //计算摩擦系数
-        frictionB = 1 / fB * 1;
-    }
-
-    console.log(frictionA);
-    console.log(frictionB);
-
-    var rectA = Bodies.rectangle(200, 320, 60, 60, {
-        friction: frictionA,
-        frictionStatic: fAjing,
-        mass: mA,
+    var landFrictionStatic = 0.1;
+    var landFriction = 0.01;
+    var rectA = Bodies.rectangle(600, 320, 60, 60, {
+        // friction: landFriction,
+        // frictionStatic: landFrictionStatic,
+        density: 0.02,
         render: {
             hasBounds: true,
             sprite: {
@@ -163,10 +171,11 @@ Example.demo = function () {
         }
     });
 
-    var rectB = Bodies.rectangle(200, 30, 60, 60, {
-        friction: frictionB,
-        frictionStatic: fBjing,
-        mass: mB,
+    var rectB = Bodies.rectangle(600, 30, 60, 60, {
+        // friction: landFriction,
+        // frictionStatic: landFrictionStatic,
+        // mass: mB,
+        density: 0.002,
         render: {
             hasBounds: true,
             sprite: {
@@ -193,12 +202,18 @@ Example.demo = function () {
     };
 };
 
+function getTanDeg(tan) {
+    var result = Math.atan(tan);
+    // result = Math.round(result);
+    return result;
+}
+
 $(function () {
     var demo = Example.demo();
 });
 
 function reset() {
     Example.demo().stop();
-   $("#sim").empty();
-   Example.demo();
+    $("#sim").empty();
+    Example.demo();
 }
