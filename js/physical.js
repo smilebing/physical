@@ -1,4 +1,5 @@
 var Example = Example || {};
+var demo;
 
 Example.demo = function (windowWidth) {
     var centerX = windowWidth / 2;
@@ -89,6 +90,8 @@ Example.demo = function (windowWidth) {
     });
     World.add(engine.world, [stickA, stickB]);
 
+    console.log(stickA);
+    console.log(stickB);
 
     Events.on(mouseConstraint, 'startdrag', function (event) {
         console.log('startdrag', event);
@@ -102,7 +105,6 @@ Example.demo = function (windowWidth) {
             var startP = event.mouse.mousedownPosition;
             var endP = event.mouse.mouseupPosition;
 
-            // var tan = -(endP.y - stickA.position.y) / (200);
             var disY = endP.y - stickA.position.y;
             var newDu = 0;
             if (disY > 0) {
@@ -127,6 +129,35 @@ Example.demo = function (windowWidth) {
             }
 
             Matter.Body.setAngle(stickA, newDu);
+        } else if (event.body.label == "stickB") {
+            console.log(stickB);
+            var startP = event.mouse.mousedownPosition;
+            var endP = event.mouse.mouseupPosition;
+
+            var disY = endP.y - stickB.position.y;
+            var newDu = 0;
+            if (disY > 0) {
+                newDu = getTanDeg(disY / 200);
+                newDu += 0.5;
+            } else {
+                newDu = getTanDeg(-disY / 200);
+                newDu = 0.5 - newDu;
+            }
+
+            console.log(newDu);
+            newDu = Math.PI * newDu;
+
+
+            console.log(disY);
+            console.log(newDu);
+            if (newDu > maxDu) {
+                newDu = maxDu;
+            }
+            if (newDu < minDu) {
+                newDu = minDu;
+            }
+
+            Matter.Body.setAngle(stickB, newDu);
         }
     });
 
@@ -184,11 +215,37 @@ Example.demo = function (windowWidth) {
         },
     });
 
+    //木头
+    var rectC = Bodies.rectangle(50, 550, 60, 60, {
+        density: 0.00500,
+        render: {
+            hasBounds: true,
+            sprite: {
+                texture: './img/mutou.png',
+            }
+        },
+    });
+
+    //金属
+    var rectD = Bodies.rectangle(150, 550, 60, 60, {
+        density: 0.01932,
+        render: {
+            hasBounds: true,
+            sprite: {
+                texture: './img/jinshu.png',
+            }
+        },
+    });
+
+    var rectE = Bodies.rectangle(250, 550, 60, 60);
+
+    var rectF = Bodies.rectangle(350, 550, 60, 60);
+
     console.log(rectA);
     console.log(rectB);
 
     // 将刚体添加到世界中
-    World.add(engine.world, [rectA, rectB]);
+    World.add(engine.world, [rectA, rectB, rectC, rectD, rectE, rectF]);
 
     return {
         engine: engine,
@@ -198,6 +255,21 @@ Example.demo = function (windowWidth) {
         stop: function () {
             Matter.Render.stop(render);
             Matter.Runner.stop(runner);
+        },
+        incRate: function () {
+            console.log("inc");
+            var newAngle = stickA.angle - 0.1;
+            if (newAngle >= minDu) {
+                Matter.Body.setAngle(stickA, newAngle);
+                Matter.Body.setAngle(stickB, newAngle);
+            }
+        },
+        decRate: function () {
+            var newAngle = stickB.angle + 0.1;
+            if (newAngle <= maxDu) {
+                Matter.Body.setAngle(stickA, newAngle);
+                Matter.Body.setAngle(stickB, newAngle);
+            }
         }
     };
 };
@@ -208,12 +280,22 @@ function getTanDeg(tan) {
     return result;
 }
 
+
 $(function () {
-    var demo = Example.demo($(window).width());
+    demo = Example.demo($(window).width());
 });
 
 function reset() {
-    Example.demo().stop();
+    demo.stop();
     $("#sim").empty();
     Example.demo($(window).width());
+}
+
+
+function incRate() {
+    demo.incRate();
+}
+
+function decRate() {
+    demo.decRate();
 }
