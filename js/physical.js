@@ -1,8 +1,9 @@
 var Example = Example || {};
 var demo;
 
-Example.demo = function (windowWidth) {
+Example.demo = function (windowWidth, windowHeight) {
     var centerX = windowWidth / 2;
+    var height = windowHeight * 0.7;
     // module aliases
     var Engine = Matter.Engine,
         Render = Matter.Render,
@@ -30,7 +31,7 @@ Example.demo = function (windowWidth) {
         element: document.getElementById("sim"),
         options: {
             width: windowWidth,
-            height: 600,
+            height: height,
             showVelocity: true,
             wireframes: false,
             background: '#f0ebc8',
@@ -47,9 +48,9 @@ Example.demo = function (windowWidth) {
 
     World.add(engine.world, [
         Bodies.rectangle(centerX, 0, windowWidth, 5, {isStatic: true}),
-        Bodies.rectangle(centerX, 600, windowWidth, 5, {isStatic: true}),
-        Bodies.rectangle(windowWidth, 300, 5, 600, {isStatic: true}),
-        Bodies.rectangle(0, 300, 5, 600, {isStatic: true})]
+        Bodies.rectangle(centerX, height, windowWidth, 5, {isStatic: true}),
+        Bodies.rectangle(windowWidth, height / 2, 5, height, {isStatic: true}),
+        Bodies.rectangle(0, height / 2, 5, height, {isStatic: true})]
     );
 
     // add mouse control
@@ -70,7 +71,7 @@ Example.demo = function (windowWidth) {
     var du = Math.PI * 0.4;
     var maxDu = Math.PI * 0.7;
     var minDu = Math.PI * 0.3;
-    var stickA = Bodies.rectangle(centerX, 400, 20, 600, {
+    var stickA = Bodies.rectangle(centerX * 1.2, 400, 20, windowWidth * 0.8, {
         isStatic: true,
         angle: du,
         label: "stickA",
@@ -79,7 +80,7 @@ Example.demo = function (windowWidth) {
         },
         chamfer: 10
     });
-    var stickB = Bodies.rectangle(centerX, 150, 20, 600, {
+    var stickB = Bodies.rectangle(centerX * 1.2, 150, 20, windowWidth * 0.8, {
         isStatic: true,
         angle: du,
         label: "stickB",
@@ -282,13 +283,13 @@ function getTanDeg(tan) {
 
 
 $(function () {
-    demo = Example.demo($(window).width());
+    demo = Example.demo($(window).width(), $(window).height());
 });
 
 function reset() {
     demo.stop();
     $("#sim").empty();
-    Example.demo($(window).width());
+    Example.demo($(window).width(), $(window).height());
 }
 
 
