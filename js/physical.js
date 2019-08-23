@@ -172,7 +172,7 @@ Example.demo = function (windowWidth, windowHeight, topOffset) {
     var redColor = '#C44D58',
         blueColor = '#4ECDC4',
         greenColor = '#C7F464';
-    var circle = Bodies.circle(50, 550, 30, {
+    var circle = Bodies.circle(50, windowHeight - 50, 30, {
         collisionFilter: {
             mask: defaultCategory | blueCategory
         },
@@ -186,7 +186,7 @@ Example.demo = function (windowWidth, windowHeight, topOffset) {
     World.add(engine.world, circle);
     console.log(circle);
 
-    var rectA = Bodies.rectangle(centerX, 320, 60, 60, {
+    var rectA = Bodies.rectangle(centerX, windowHeight / 2, 60, 60, {
         density: 0.02,
         render: {
             hasBounds: true,
@@ -210,7 +210,7 @@ Example.demo = function (windowWidth, windowHeight, topOffset) {
     });
 
     //木头
-    var rectC = Bodies.rectangle(200, 550, 60, 60, {
+    var rectC = Bodies.rectangle(200, windowHeight - 60, 60, 60, {
         density: 0.00500,
         render: {
             hasBounds: true,
@@ -221,7 +221,7 @@ Example.demo = function (windowWidth, windowHeight, topOffset) {
     });
 
     //金属
-    var rectD = Bodies.rectangle(300, 550, 60, 60, {
+    var rectD = Bodies.rectangle(300, windowHeight - 60, 60, 60, {
         density: 0.01932,
         render: {
             hasBounds: true,
