@@ -91,8 +91,9 @@ Example.demo = function (windowWidth, windowHeight) {
     });
     World.add(engine.world, [stickA, stickB]);
 
-    console.log(stickA);
-    console.log(stickB);
+    var dangA = Bodies.rectangle(stickA.position.x * 1.2, stickA.position.y * 0.8, 5, 100, {isStatic: true});
+    var dangB = Bodies.rectangle(stickB.position.x * 1.2, stickB.position.y * 0.8, 5, 100, {isStatic: true});
+    var hasDang = false;
 
     Events.on(mouseConstraint, 'startdrag', function (event) {
         console.log('startdrag', event);
@@ -102,7 +103,6 @@ Example.demo = function (windowWidth, windowHeight) {
     Events.on(mouseConstraint, 'enddrag', function (event) {
         console.log('enddrag', event);
         if (event.body.label == "stickA") {
-            console.log(stickA);
             var startP = event.mouse.mousedownPosition;
             var endP = event.mouse.mouseupPosition;
 
@@ -172,7 +172,7 @@ Example.demo = function (windowWidth, windowHeight) {
     var redColor = '#C44D58',
         blueColor = '#4ECDC4',
         greenColor = '#C7F464';
-    var circle = Bodies.circle(centerX, 40, 30, {
+    var circle = Bodies.circle(50, 550, 30, {
         collisionFilter: {
             mask: defaultCategory | blueCategory
         },
@@ -186,11 +186,7 @@ Example.demo = function (windowWidth, windowHeight) {
     World.add(engine.world, circle);
     console.log(circle);
 
-    var landFrictionStatic = 0.1;
-    var landFriction = 0.01;
     var rectA = Bodies.rectangle(centerX, 320, 60, 60, {
-        // friction: landFriction,
-        // frictionStatic: landFrictionStatic,
         density: 0.02,
         render: {
             hasBounds: true,
@@ -204,9 +200,6 @@ Example.demo = function (windowWidth, windowHeight) {
     });
 
     var rectB = Bodies.rectangle(centerX, 30, 60, 60, {
-        // friction: landFriction,
-        // frictionStatic: landFrictionStatic,
-        // mass: mB,
         density: 0.002,
         render: {
             hasBounds: true,
@@ -217,7 +210,7 @@ Example.demo = function (windowWidth, windowHeight) {
     });
 
     //木头
-    var rectC = Bodies.rectangle(50, 550, 60, 60, {
+    var rectC = Bodies.rectangle(200, 550, 60, 60, {
         density: 0.00500,
         render: {
             hasBounds: true,
@@ -228,7 +221,7 @@ Example.demo = function (windowWidth, windowHeight) {
     });
 
     //金属
-    var rectD = Bodies.rectangle(150, 550, 60, 60, {
+    var rectD = Bodies.rectangle(300, 550, 60, 60, {
         density: 0.01932,
         render: {
             hasBounds: true,
@@ -238,15 +231,12 @@ Example.demo = function (windowWidth, windowHeight) {
         },
     });
 
-    var rectE = Bodies.rectangle(250, 550, 60, 60);
-
-    var rectF = Bodies.rectangle(350, 550, 60, 60);
-
-    console.log(rectA);
-    console.log(rectB);
+    // var rectE = Bodies.rectangle(250, 550, 60, 60);
+    //
+    // var rectF = Bodies.rectangle(350, 550, 60, 60);
 
     // 将刚体添加到世界中
-    World.add(engine.world, [rectA, rectB, rectC, rectD, rectE, rectF]);
+    World.add(engine.world, [rectA, rectB, rectC, rectD]);
 
     return {
         engine: engine,
@@ -271,25 +261,32 @@ Example.demo = function (windowWidth, windowHeight) {
                 Matter.Body.setAngle(stickA, newAngle);
                 Matter.Body.setAngle(stickB, newAngle);
             }
+        },
+        changeStatus: function () {
+            if (hasDang) {
+                World.remove(engine.world, [dangA, dangB]);
+            } else {
+                World.add(engine.world, [dangA, dangB]);
+            }
+            hasDang = !hasDang;
         }
     };
 };
 
 function getTanDeg(tan) {
     var result = Math.atan(tan);
-    // result = Math.round(result);
     return result;
 }
 
 
 $(function () {
-    demo = Example.demo($(window).width(), $(window).height());
+    demo = Example.demo($(document).width(), $(document).height());
 });
 
 function reset() {
     demo.stop();
     $("#sim").empty();
-    Example.demo($(window).width(), $(window).height());
+    Example.demo($(document).width(), $(document).height());
 }
 
 
@@ -299,4 +296,8 @@ function incRate() {
 
 function decRate() {
     demo.decRate();
+}
+
+function changeStatus() {
+    demo.changeStatus();
 }
