@@ -90,8 +90,8 @@ Example.demo = function (windowWidth, windowHeight, topOffset) {
     });
     World.add(engine.world, [stickA, stickB]);
 
-    var dangA = Bodies.rectangle(stickA.position.x * 1.2, stickA.position.y * 0.8, 5, 100, {isStatic: true});
-    var dangB = Bodies.rectangle(stickB.position.x * 1.2, stickB.position.y * 0.8, 5, 100, {isStatic: true});
+    var dangA = Bodies.rectangle(stickA.position.x * 1.2, stickA.position.y - 80, 5, 100, {isStatic: true});
+    var dangB = Bodies.rectangle(stickB.position.x * 1.2, stickB.position.y - 80, 5, 100, {isStatic: true});
     var hasDang = false;
 
     Events.on(mouseConstraint, 'startdrag', function (event) {
@@ -297,6 +297,14 @@ function decRate() {
     demo.decRate();
 }
 
+
 function changeStatus() {
     demo.changeStatus();
+
+    if ($("#changeBtn").text() == "显示格挡") {
+        $("#changeBtn").text("隐藏格挡");
+    } else {
+        $("#changeBtn").text("显示格挡");
+    }
+    status = !status;
 }
