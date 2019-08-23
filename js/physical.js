@@ -1,7 +1,7 @@
 var Example = Example || {};
 var demo;
 
-Example.demo = function (windowWidth, windowHeight) {
+Example.demo = function (windowWidth, windowHeight, topOffset) {
     var centerX = windowWidth / 2;
     var height = windowHeight * 0.7;
     // module aliases
@@ -71,7 +71,7 @@ Example.demo = function (windowWidth, windowHeight) {
     var du = Math.PI * 0.4;
     var maxDu = Math.PI * 0.7;
     var minDu = Math.PI * 0.3;
-    var stickA = Bodies.rectangle(centerX * 1.2, 400, 20, windowWidth * 0.8, {
+    var stickA = Bodies.rectangle(centerX * 1.2, windowHeight * 0.5 + topOffset, 20, windowWidth * 0.8, {
         isStatic: true,
         angle: du,
         label: "stickA",
@@ -80,7 +80,7 @@ Example.demo = function (windowWidth, windowHeight) {
         },
         chamfer: 10
     });
-    var stickB = Bodies.rectangle(centerX * 1.2, 150, 20, windowWidth * 0.8, {
+    var stickB = Bodies.rectangle(centerX * 1.2, windowHeight * 0.2 + topOffset, 20, windowWidth * 0.8, {
         isStatic: true,
         angle: du,
         label: "stickB",
@@ -246,6 +246,7 @@ Example.demo = function (windowWidth, windowHeight) {
         stop: function () {
             Matter.Render.stop(render);
             Matter.Runner.stop(runner);
+            Matter.World.clear(engine.world, false);
         },
         incRate: function () {
             console.log("inc");
@@ -280,13 +281,13 @@ function getTanDeg(tan) {
 
 
 $(function () {
-    demo = Example.demo($(document).width(), $(document).height());
+    demo = Example.demo($(document).width(), $(document).height(), $("#sim").offset().top);
 });
 
 function reset() {
     demo.stop();
     $("#sim").empty();
-    Example.demo($(document).width(), $(document).height());
+    Example.demo($(document).width(), $(document).height(), $("#sim").offset().top);
 }
 
 
