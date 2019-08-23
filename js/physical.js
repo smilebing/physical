@@ -31,7 +31,7 @@ Example.demo = function (windowWidth, windowHeight, topOffset) {
         element: document.getElementById("sim"),
         options: {
             width: windowWidth,
-            height: height,
+            height: height + topOffset,
             showVelocity: true,
             wireframes: false,
             background: '#f0ebc8',
@@ -46,12 +46,11 @@ Example.demo = function (windowWidth, windowHeight, topOffset) {
     var runner = Runner.create();
     Runner.run(runner, engine);
 
-    World.add(engine.world, [
-        Bodies.rectangle(centerX, 0, windowWidth, 5, {isStatic: true}),
-        Bodies.rectangle(centerX, height, windowWidth, 5, {isStatic: true}),
-        Bodies.rectangle(windowWidth, height / 2, 5, height, {isStatic: true}),
-        Bodies.rectangle(0, height / 2, 5, height, {isStatic: true})]
-    );
+    var shang = Bodies.rectangle(centerX, 0, windowWidth, 5, {isStatic: true});
+    var xia = Bodies.rectangle(centerX, height, windowWidth, 5, {isStatic: true});
+    var you = Bodies.rectangle(windowWidth, height / 2, 5, height, {isStatic: true});
+    var zuo = Bodies.rectangle(0, height / 2, 5, height, {isStatic: true});
+    World.add(engine.world, [shang, xia, zuo, you]);
 
     // add mouse control
     var mouse = Mouse.create(render.canvas),
@@ -172,7 +171,7 @@ Example.demo = function (windowWidth, windowHeight, topOffset) {
     var redColor = '#C44D58',
         blueColor = '#4ECDC4',
         greenColor = '#C7F464';
-    var circle = Bodies.circle(50, windowHeight - 50, 30, {
+    var circle = Bodies.circle(100, xia.position.y - 60, 30, {
         collisionFilter: {
             mask: defaultCategory | blueCategory
         },
@@ -210,7 +209,7 @@ Example.demo = function (windowWidth, windowHeight, topOffset) {
     });
 
     //木头
-    var rectC = Bodies.rectangle(200, windowHeight - 60, 60, 60, {
+    var rectC = Bodies.rectangle(200, xia.position.y - 60, 60, 60, {
         density: 0.00500,
         render: {
             hasBounds: true,
@@ -221,7 +220,7 @@ Example.demo = function (windowWidth, windowHeight, topOffset) {
     });
 
     //金属
-    var rectD = Bodies.rectangle(300, windowHeight - 60, 60, 60, {
+    var rectD = Bodies.rectangle(300, xia.position.y - 60, 60, 60, {
         density: 0.01932,
         render: {
             hasBounds: true,
@@ -249,7 +248,6 @@ Example.demo = function (windowWidth, windowHeight, topOffset) {
             Matter.World.clear(engine.world, false);
         },
         incRate: function () {
-            console.log("inc");
             var newAngle = stickA.angle - 0.1;
             if (newAngle >= minDu) {
                 Matter.Body.setAngle(stickA, newAngle);
