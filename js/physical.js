@@ -31,7 +31,7 @@ Example.demo = function (windowWidth, windowHeight, topOffset) {
         element: document.getElementById("sim"),
         options: {
             width: windowWidth,
-            height: height + topOffset,
+            height: height,
             showVelocity: true,
             wireframes: false,
             background: '#f0ebc8',
@@ -245,7 +245,7 @@ Example.demo = function (windowWidth, windowHeight, topOffset) {
         stop: function () {
             Matter.Render.stop(render);
             Matter.Runner.stop(runner);
-            Matter.World.clear(engine.world, false);
+            Matter.Engine.clear(engine);
         },
         incRate: function () {
             var newAngle = stickA.angle - 0.1;
@@ -279,13 +279,13 @@ function getTanDeg(tan) {
 
 
 $(function () {
-    demo = Example.demo($(document).width(), $(document).height(), $("#sim").offset().top);
+    demo = Example.demo($(document).width(), $(window).height(), $("#sim").offset().top);
 });
 
 function reset() {
     demo.stop();
     $("#sim").empty();
-    Example.demo($(document).width(), $(document).height(), $("#sim").offset().top);
+    demo = Example.demo($(document).width(), $(window).height(), $("#sim").offset().top);
 }
 
 
